@@ -1,16 +1,33 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { StyleSheet, Text, View, Button } from 'react-native'
 import CartItem from './CartItem';
 import Colors from '../../constants/Colors'
 
 const OrderItem = props => {
+  const [showDetails, setShowDetails] = useState(false);
   return (
     <View style={styles.orderItem}>
       <View style={styles.summary}>
         <Text style={styles.amount}>{props.amount.toFixed(2)}</Text>
         <Text style={styles.date}>{props.date}</Text>
       </View>
-      <Button color={Colors.primaryColor} title="Show Details" />
+      <Button 
+        color={Colors.primaryColor} 
+        title={showDetails ? "Hide Details" : "Show Details" }
+        onPress={() => {
+          setShowDetails(prevState => !prevState);
+        }} 
+      />
+      {showDetails && 
+      <View style={styles.detailItems}>
+        {props.items.map(cartItem => 
+        <CartItem
+          key={cartItem.productId}
+          quantity={cartItem.quantity}
+          title={cartItem.productTitle}
+          amount={cartItem.sum}
+        />)}  
+      </View>}
     </View>
   );
 };
@@ -33,7 +50,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    width: '100%'
+    width: '100%',
+    marginBottom: 15
   },
   amount: {
     fontSize: 16
@@ -42,4 +60,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#888'
   },
+  detailItems: {
+    width: '100%'
+  }
 });
