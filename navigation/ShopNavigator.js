@@ -1,22 +1,59 @@
+import React from 'react'
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
+import { createDrawerNavigator } from 'react-navigation-drawer';
 import ProductsOverviewScreen from '../screens/shop/ProductsOverviewScreen';
 import Colors from  '../constants/Colors';
 import { Platform } from 'react-native';
 import ProductsDetailScreen from '../screens/shop/ProductsDetailScreen';
 import CartScreen from '../screens/shop/CartScreen';
+import OrdersScreen from '../screens/shop/OrdersScreen';
+import { Ionicons } from '@expo/vector-icons';
+
+const defaultNavOptions = {
+  headerStyle: {
+    backgroundColor: Platform.OS === 'android' ? Colors.primaryColor : ''
+  },
+  headerTintColor: Platform.OS === 'android' ? 'white' : Colors.primaryColor
+}
 
 const ProductsNavigator = createStackNavigator({
   ProductsOverview: ProductsOverviewScreen,
   ProductDetail: ProductsDetailScreen,
   Cart: CartScreen
 }, {
-  defaultNavigationOptions: {
-    headerStyle: {
-      backgroundColor: Platform.OS === 'android' ? Colors.primaryColor : ''
-    },
-    headerTintColor: Platform.OS === 'android' ? 'white' : Colors.primaryColor
-  }
+  navigationOptions: {
+    drawerIcon: drawerConfig =>
+      <Ionicons 
+        name={Platform.OS === 'android' ? 'md-cart' : 'ios-cart'}
+        size={23}
+        color={drawerConfig.tintColor}
+      />
+  }, 
+  defaultNavigationOptions: defaultNavOptions 
 });
 
-export default createAppContainer(ProductsNavigator);
+const OrdersNavigator = createStackNavigator({
+  Orders: OrdersScreen
+}, { 
+  navigationOptions: {
+    drawerIcon: drawerConfig =>
+      <Ionicons 
+        name={Platform.OS === 'android' ? 'md-list' : 'ios-list'}
+        size={23}
+        color={drawerConfig.tintColor}
+      />
+  },
+  defaultNavigationOptions: defaultNavOptions 
+});
+
+const ShopNavigator = createDrawerNavigator ({
+  Products: ProductsNavigator,
+  Orders: OrdersNavigator
+}, {
+  contentOptions: {
+    activeTintColor: Colors.primaryColor
+  }
+})
+
+export default createAppContainer(ShopNavigator);
